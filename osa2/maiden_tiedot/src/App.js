@@ -41,7 +41,7 @@ const App = () => {
       <FormInput
         value={maaSuodatin}
         onChange={maaSuodinMuuttaja}
-        label="Etsi nimen perusteella"
+        label="Etsi maan nimen perusteella"
       />
       {maaKomponentti}
     </div>
