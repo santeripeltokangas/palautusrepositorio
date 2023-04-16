@@ -1,110 +1,116 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react'
 
-import { Filter, Notification, PersonForm, Persons } from './osat';
-import personService from './palvelut/persons';
+import Filter from './osat/Filter'
+import Notification from './osat/Notification'
+import PersonForm from './osat/PersonForm'
+import Persons from './osat/Persons'
+import personService from './palvelut/persons'
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState('');
-  const [newNumber, setNewNumber] = useState('');
+  const [ihmiset, asetaIhmiset] = useState([])
+  const [uusiNimi, asetaUusiNimi] = useState('')
+  const [uusiNumero, asetaUusiNumero] = useState('')
 
-  const [nameFilter, setNameFilter] = useState('');
-  const [notificationMessage, setNotificationMessage] = useState(null);
-  const [notificationType, setNotificationType] = useState('');
+  const [nimiFiltteri, asetaNimiFiltteri] = useState('')
+  const [ilmoitusViesti, asetaIlmoitusViesti] = useState(null)
+  const [ilmoitusTyyppi, asetaIlmoitusTyyppi] = useState('')
 
-  const handleNewNameChange = (event) => setNewName(event.target.value);
-  const handleNewNumberChange = (event) => setNewNumber(event.target.value);
+  const lisaaIhminen = (event) => {
+    event.preventDefault()
 
-  const addPerson = (event) => {
-    event.preventDefault();
-
-    const duplicatePerson = persons.find((person) => person.name === newName);
+    const duplicatePerson = ihmiset.find((person) => person.name === uusiNimi);
 
     if (duplicatePerson !== undefined) {
-      if (duplicatePerson.number === newNumber)
-        return alert(`${newName} on jo listalla.`);
+      if (duplicatePerson.number === uusiNumero)
+        return alert(`${uusiNimi} on jo listalla.`)
       else if (
         window.confirm(
-          `${newName} on jo listalla. Pitäisikö hänen numeronsa korvata antamallasi?`
+          `${uusiNimi} on jo listalla. Pitäisikö hänen numeronsa korvata antamallasi?`
         )
       ) {
         personService
           .update(duplicatePerson.id, {
             ...duplicatePerson,
-            number: newNumber,
+            number: uusiNumero,
           })
           .then((updatedPerson) => {
-            setPersons(
-              persons.map((person) =>
+            asetaIhmiset(
+              ihmiset.map((person) =>
                 person.id !== updatedPerson.id ? person : updatedPerson
               )
-            );
-            showNotification(`"${newName}" päivitetty.`);
+            )
+            naytaIlmoitus(`"${uusiNimi}" päivitetty.`);
           })
           .catch(() => {
-            setPersons(
-              persons.filter((person) => person.id !== duplicatePerson.id)
-            );
-            showNotification(`Ei onnistuttu päivittämään "${newName}".`, 'error');
-          });
+            asetaIhmiset(
+              ihmiset.filter((person) => person.id !== duplicatePerson.id)
+            )
+            naytaIlmoitus(`Ei onnistuttu päivittämään "${uusiNimi}".`, 'error');
+          })
       }
     } else {
       personService
-        .create({ name: newName, number: newNumber })
+        .create({ name: uusiNimi, number: uusiNumero })
         .then((person) => {
-          setPersons(persons.concat(person));
-          showNotification(`Lisätty listaan "${newName}".`);
-        });
+          asetaIhmiset(ihmiset.concat(person));
+          naytaIlmoitus(`Lisätty listaan "${uusiNimi}".`)
+        })
     }
 
-    setNewName('');
-    setNewNumber('');
-  };
+    asetaUusiNimi('')
+    asetaUusiNumero('')
+  }
 
-  const showNotification = (message, type = 'success') => {
-    setNotificationMessage(message);
-    setNotificationType(type);
-    setTimeout(() => setNotificationMessage(null), 3000);
-  };
+  const handleNewNameChange = (event) => asetaUusiNimi(event.target.value)
+  const handleNewNumberChange = (event) => asetaUusiNumero(event.target.value)
+
+  const naytaIlmoitus = (message, type = 'success') => {
+    asetaIlmoitusViesti(message);
+    asetaIlmoitusTyyppi(type);
+    setTimeout(() => asetaIlmoitusViesti(null), 3000)
+  }
 
   const handleDeletePerson = (person) => {
     if (window.confirm(`Poista "${person.name}"?`))
       personService
         .destroy(person.id)
         .then(() =>
-          setPersons(
-            persons.filter((statePerson) => statePerson.id !== person.id)
+          asetaIhmiset(
+            ihmiset.filter((statePerson) =>
+            statePerson.id !== person.id)
           )
-        );
-  };
+        )
+  }
 
   useEffect(() => {
-    personService.getAll().then((persons) => setPersons(persons));
-  }, []);
+    personService.getAll().then((persons) =>
+    asetaIhmiset(persons))
+  }, [])
 
-  const handleNameFilterChange = (event) => setNameFilter(event.target.value);
+  const handleNameFilterChange = (event)=>
+  asetaNimiFiltteri(event.target.value)
 
   return (
     <div>
       <h1>Puhelinluettelo</h1>
-      <Notification message={notificationMessage} type={notificationType} />
-      <Filter value={nameFilter} onChange={handleNameFilterChange} />
+      <Notification message={ilmoitusViesti} type={ilmoitusTyyppi} />
+      <Filter value={nimiFiltteri} onChange={handleNameFilterChange} />
       <h2>Lisää henkilö:</h2>
       <PersonForm
-        onSubmit={addPerson}
-        valueName={newName}
+        onSubmit={lisaaIhminen}
         onChangeName={handleNewNameChange}
-        valueNumber={newNumber}
         onChangeNumber={handleNewNumberChange}
+        valueName={uusiNimi}
+        valueNumber={uusiNumero}
       />
       <h2>Numerot</h2>
       <Persons
-        persons={persons}
-        nameFilter={nameFilter}
+        persons={ihmiset}
         onDelete={handleDeletePerson}
+        nameFilter={nimiFiltteri}
       />
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App

@@ -1,7 +1,5 @@
 const Filter = ({ value, onChange }) => (
-    <div>
-      Suodata nimen perusteella: <input value={value} onChange={onChange} />
-    </div>
-  );
+    <div> Suodata nimen perusteella: <input value={value} onChange={onChange} /> </div>
+  )
   
-  export default Filter;
+  export default Filter
