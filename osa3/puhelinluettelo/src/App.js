@@ -41,7 +41,8 @@ const App = () => {
             )
             naytaIlmoitus(`"${uusiNimi}" päivitetty.`);
           })
-          .catch(() => {
+          .catch((error) => {
+            if (!error)
             asetaIhmiset(
               ihmiset.filter((person) => person.id !== kaksoisOlento.id)
             )
@@ -55,6 +56,7 @@ const App = () => {
           asetaIhmiset(ihmiset.concat(person));
           naytaIlmoitus(`Lisätty listaan "${uusiNimi}".`)
         })
+        .catch((error) => naytaIlmoitus(error, 'virhe'))
     }
 
     asetaUusiNimi('')
@@ -70,14 +72,14 @@ const App = () => {
     setTimeout(() => asetaIlmoitusViesti(null), 3000)
   }
 
-  const handleDeletePerson = (person) => {
-    if (window.confirm(`Poista "${person.name}"?`))
+  const handleDeletePerson = (henkilo) => {
+    if (window.confirm(`Poista "${henkilo.name}"?`))
       personService
-        .destroy(person.id)
+        .destroy(henkilo.id)
         .then(() =>
           asetaIhmiset(
             ihmiset.filter((statePerson) =>
-            statePerson.id !== person.id)
+            statePerson.id !== henkilo.id)
           )
         )
   }

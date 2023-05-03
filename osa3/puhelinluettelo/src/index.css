@@ -1,0 +1,17 @@
+.notification {
+    background-color: #f5f5f5;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-left: 5px solid;
+    display: inline-block;
+    min-width: 10em;
+    font-size: 20px;
+  }
+  
+  .notification.success {
+    border-color: rgb(0, 255, 0);
+  }
+  
+  .notification.error {
+    border-color: rgb(255, 0, 0);
+  }

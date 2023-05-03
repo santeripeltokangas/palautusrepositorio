@@ -1,11 +1,11 @@
 const Persons = ({ persons, nameFilter, onDelete }) => {
-    const filteredPeople = persons.filter((person) =>
+    const suodatetutHenkilot = persons.filter((person) =>
       person.name.toLowerCase().includes(nameFilter.toLowerCase())
     )
-    return filteredPeople.map((person) => (
-      <div key={person.name}>
-        {person.name} {person.number}{' '}
-        <button onClick={() => onDelete(person)}>Poista</button>
+    return suodatetutHenkilot.map((henkilo) => (
+      <div key={henkilo.name}>
+        {henkilo.name} {henkilo.number}{' '}
+        <button onClick={() => onDelete(henkilo)}>Poista</button>
       </div>
     ))
   }

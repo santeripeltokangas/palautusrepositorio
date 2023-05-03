@@ -1,0 +1,23 @@
+# fly.toml app configuration file generated for billowing-frog-8855 on 2023-04-30T19:20:25+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+[env]
+  PORT = "8080" # lisätään tämä
+
+[experimental]
+  auto_rollback = true
+
+app = "holy-star-109"
+primary_region = "arn"
+
+[http_service]
+  internal_port = 3001
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080 
+  processes = ["app"]
